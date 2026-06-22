@@ -1,0 +1,41 @@
+name: release
+
+# Tag a version (e.g. `git tag v1.0.1 && git push --tags`) to build installers
+# for Windows, macOS, and Linux on GitHub's runners and attach them to the
+# matching GitHub Release. macOS/Linux can't be cross-built from Windows, so CI
+# is how those artifacts get produced.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm run setup
+
+      - name: Build web + server bundle
+        run: npm run build:app
+
+      - name: Build and publish installer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --publish always

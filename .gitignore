@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+release/
+.friday/
+.wwebjs_cache/
+.wwebjs_auth/
+*.log
+.env
+.DS_Store

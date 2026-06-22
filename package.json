@@ -1,0 +1,69 @@
+{
+  "name": "friday",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Friday — an AI-first local coding agent. Bring any model (Claude, Codex, Mistral, Gemini, Qwen) and switch between them mid-task without losing context.",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "author": "Sofiane Alla",
+  "scripts": {
+    "setup": "npm install && npm --prefix server install && npm --prefix web install",
+    "dev": "concurrently -n server,web -c cyan,magenta \"npm --prefix server run dev\" \"npm --prefix web run dev\"",
+    "build:web": "npm --prefix web run build",
+    "build:server": "node scripts/build-server.mjs",
+    "build:app": "npm run build:web && npm run build:server",
+    "build": "npm run build:app",
+    "electron": "electron .",
+    "dist:win": "npm run build:app && electron-builder --win --publish never",
+    "dist:publish": "npm run build:app && electron-builder --publish always",
+    "start": "npm --prefix server run start"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0",
+    "esbuild": "^0.24.0"
+  },
+  "build": {
+    "appId": "com.oliphantfusion.friday",
+    "productName": "Friday",
+    "directories": {
+      "output": "release",
+      "buildResources": "build-resources"
+    },
+    "files": [
+      "electron/**/*",
+      "build/server.mjs",
+      "web/dist/**/*",
+      "package.json"
+    ],
+    "asar": false,
+    "win": {
+      "target": ["nsis"],
+      "artifactName": "Friday-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    },
+    "mac": {
+      "target": ["dmg"],
+      "category": "public.app-category.developer-tools",
+      "artifactName": "Friday-${version}.${ext}"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Development",
+      "artifactName": "Friday-${version}.${ext}"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "SofianeAlla",
+        "repo": "friday"
+      }
+    ]
+  }
+}
