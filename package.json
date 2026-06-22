@@ -44,9 +44,11 @@
       "target": [
         "nsis"
       ],
-      "publisherName": "Bespoke AI, Haiku Labs",
       "icon": "build-resources/icon.png",
-      "artifactName": "Friday-Setup-${version}.${ext}"
+      "artifactName": "Friday-Setup-${version}.${ext}",
+      "signtoolOptions": {
+        "publisherName": "Bespoke AI, Haiku Labs"
+      }
     },
     "nsis": {
       "oneClick": false,
