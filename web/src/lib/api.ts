@@ -170,6 +170,15 @@ export interface GitStatus {
 }
 export interface GitResult { ok: boolean; output?: string; message?: string }
 
+// Bridge injected by the Electron preload (undefined in a plain browser / dev).
+export interface DesktopBridge {
+  isDesktop: boolean;
+  platform: string;
+  createDesktopShortcut: () => Promise<{ ok: boolean; path?: string; error?: string }>;
+}
+export const desktop: DesktopBridge | undefined =
+  typeof window !== "undefined" ? (window as unknown as { friday?: DesktopBridge }).friday : undefined;
+
 export type ImportSource = "claude" | "codex";
 export interface ImportSession {
   sourceId: string;

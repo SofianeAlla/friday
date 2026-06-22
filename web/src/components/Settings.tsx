@@ -8,7 +8,7 @@ import { useFriday } from "@/store";
 import { CHANNEL_LABEL, THEME_COLORS } from "@/lib/brand";
 import { matchPreset } from "@/lib/theme";
 import { ModelLogo, familyForProvider } from "@/components/ModelLogo";
-import { api, type CliStatus, type LocalModels, type PermissionMode, type ProviderConfig, type ProviderPreset, type RemoteSettings, type RemoteState } from "@/lib/api";
+import { api, desktop, type CliStatus, type LocalModels, type PermissionMode, type ProviderConfig, type ProviderPreset, type RemoteSettings, type RemoteState } from "@/lib/api";
 
 // ---- icons -------------------------------------------------------------
 function CloseIcon({ className }: { className?: string }) {
@@ -112,9 +112,47 @@ export function Settings() {
           <PermissionsSection />
           <RemoteSection />
           <AppearanceSection />
+          <DesktopSection />
         </div>
       </div>
     </div>
+  );
+}
+
+// ---- Desktop (only in the packaged Electron app) -----------------------
+function DesktopSection() {
+  const bridge = desktop;
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  if (!bridge?.isDesktop) return null; // hidden in the browser / dev
+
+  const add = async () => {
+    setBusy(true); setErr(null); setMsg(null);
+    try {
+      const r = await bridge.createDesktopShortcut();
+      if (r.ok) setMsg(r.path ? `Shortcut created: ${r.path}` : "Shortcut added to your desktop.");
+      else setErr(r.error || "Could not create the shortcut.");
+    } catch (e) { setErr(String((e as Error).message || e)); }
+    finally { setBusy(false); }
+  };
+
+  return (
+    <section className="space-y-3">
+      <div>
+        <h3 className="text-sm font-medium uppercase tracking-bespoke-caps text-accent">Desktop</h3>
+        <p className="mt-1 text-xs text-muted-foreground">Put a Friday shortcut on your desktop for one-click launch.</p>
+      </div>
+      <button
+        onClick={() => void add()}
+        disabled={busy}
+        className="rounded-sm border border-accent bg-accent px-3 py-2 text-xs font-medium uppercase tracking-bespoke-caps text-accent-foreground hover:opacity-90 disabled:opacity-50"
+      >
+        {busy ? "Adding…" : "Add desktop shortcut"}
+      </button>
+      {msg && <div className="break-all text-[11px] text-accent">{msg}</div>}
+      {err && <div className="text-[11px] text-red-400">{err}</div>}
+    </section>
   );
 }
 

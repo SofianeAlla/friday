@@ -1,6 +1,6 @@
 {
   "name": "friday",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Friday — an AI-first local coding agent. Bring any model (Claude, Codex, Mistral, Gemini, Qwen) and switch between them mid-task without losing context.",
   "type": "module",

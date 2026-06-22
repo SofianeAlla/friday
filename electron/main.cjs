@@ -3,11 +3,34 @@
 // to answer, then loads the window at that origin so the frontend's relative
 // /api calls + SSE just work. No separate web server, no CORS.
 
-const { app, BrowserWindow, shell, dialog } = require("electron");
+const { app, BrowserWindow, shell, dialog, ipcMain } = require("electron");
 const { spawn } = require("node:child_process");
+const fs = require("node:fs");
 const path = require("node:path");
 const http = require("node:http");
 const net = require("node:net");
+
+// Renderer -> main: create a desktop shortcut to the installed app.
+ipcMain.handle("friday:create-desktop-shortcut", async () => {
+  try {
+    const exe = app.getPath("exe");
+    const desktop = app.getPath("desktop");
+    if (process.platform === "win32") {
+      const link = path.join(desktop, "Friday.lnk");
+      const ok = shell.writeShortcutLink(link, "create", { target: exe, description: "Friday", icon: exe, iconIndex: 0 });
+      return ok ? { ok: true, path: link } : { ok: false, error: "Windows refused to write the shortcut." };
+    }
+    if (process.platform === "linux") {
+      const link = path.join(desktop, "Friday.desktop");
+      fs.writeFileSync(link, `[Desktop Entry]\nType=Application\nName=Friday\nExec="${exe}"\nIcon=friday\nTerminal=false\nCategories=Development;\n`);
+      fs.chmodSync(link, 0o755);
+      return { ok: true, path: link };
+    }
+    return { ok: false, error: "On macOS, drag Friday from Applications to your desktop to make an alias." };
+  } catch (e) {
+    return { ok: false, error: String((e && e.message) || e) };
+  }
+});
 
 let serverProc = null;
 let serverPort = 0;
@@ -71,7 +94,7 @@ function createWindow() {
     backgroundColor: "#17130f",
     title: "Friday",
     autoHideMenuBar: true,
-    webPreferences: { contextIsolation: true, nodeIntegration: false },
+    webPreferences: { contextIsolation: true, nodeIntegration: false, preload: path.join(__dirname, "preload.cjs") },
   });
   // External links open in the real browser (e.g. "Get a key", git-scm).
   win.webContents.setWindowOpenHandler(({ url }) => {
