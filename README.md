@@ -1,6 +1,8 @@
 <div align="center">
 
-# ⚡ Friday
+<img src="build-resources/icon.png" width="116" alt="Friday" />
+
+# Friday
 
 **Your coding agent, on call.**
 

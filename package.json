@@ -5,7 +5,7 @@
   "description": "Friday — an AI-first local coding agent. Bring any model (Claude, Codex, Mistral, Gemini, Qwen) and switch between them mid-task without losing context.",
   "type": "module",
   "main": "electron/main.cjs",
-  "author": "Sofiane Alla",
+  "author": "Bespoke AI, Haiku Labs",
   "scripts": {
     "setup": "npm install && npm --prefix server install && npm --prefix web install",
     "dev": "concurrently -n server,web -c cyan,magenta \"npm --prefix server run dev\" \"npm --prefix web run dev\"",
@@ -19,14 +19,16 @@
     "start": "npm --prefix server run start"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "concurrently": "^9.1.0",
     "electron": "^33.0.0",
     "electron-builder": "^25.0.0",
     "esbuild": "^0.24.0"
   },
   "build": {
-    "appId": "com.oliphantfusion.friday",
+    "appId": "com.haikulabs.friday",
     "productName": "Friday",
+    "copyright": "© 2026 Bespoke AI · Haiku Labs",
     "directories": {
       "output": "release",
       "buildResources": "build-resources"
@@ -39,7 +41,11 @@
     ],
     "asar": false,
     "win": {
-      "target": ["nsis"],
+      "target": [
+        "nsis"
+      ],
+      "publisherName": "Bespoke AI, Haiku Labs",
+      "icon": "build-resources/icon.png",
       "artifactName": "Friday-Setup-${version}.${ext}"
     },
     "nsis": {
@@ -49,12 +55,16 @@
       "createDesktopShortcut": true
     },
     "mac": {
-      "target": ["dmg"],
+      "target": [
+        "dmg"
+      ],
       "category": "public.app-category.developer-tools",
       "artifactName": "Friday-${version}.${ext}"
     },
     "linux": {
-      "target": ["AppImage"],
+      "target": [
+        "AppImage"
+      ],
       "category": "Development",
       "artifactName": "Friday-${version}.${ext}"
     },

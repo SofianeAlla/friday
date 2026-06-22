@@ -824,6 +824,6 @@ if (existsSync(webDist)) {
 }
 
 app.listen(PORT, () => {
-  console.log(`\n  ⚡ Friday backend on http://localhost:${PORT}`);
+  console.log(`\n  » Friday backend on http://localhost:${PORT}`);
   console.log(`     active project: ${getActiveProject()?.path ?? "(none - add a repo in the app)"}\n`);
 });

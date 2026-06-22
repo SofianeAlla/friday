@@ -13,10 +13,10 @@ if [ "$NODE_MAJOR" -lt 18 ]; then
   exit 1
 fi
 
-echo "⚡ Installing Friday (one-time)…"
+echo "» Installing Friday (one-time)…"
 npm run setup
 
 echo ""
-echo "⚡ Starting Friday → http://localhost:5173"
+echo "» Starting Friday → http://localhost:5173"
 echo "   (backend on :8787; press Ctrl-C to stop)"
 npm run dev
